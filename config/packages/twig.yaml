@@ -1,6 +1,10 @@
 twig:
     file_name_pattern: '*.twig'
+    globals:
+        asset_base_url: '/assets/'
+
 
 when@test:
     twig:
         strict_variables: true
+    
