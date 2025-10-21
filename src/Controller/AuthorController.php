@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Author;
 use App\Form\FormNameType;
+use App\Form\SearchType;
 use App\Repository\AuthorRepository;
 use Doctrine\Persistence\ManagerRegistry ;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -109,6 +110,15 @@ public function authorDetails($id)
         return $this->render('author/listAuthor.html.twig' , ['list' => $author]);
 
     }     
+    #[Route(path :'/ShowAllAuthorbuild', name:'ShowAllAuthorbuild')]
+    public function ShowAllAuthorbuild(AuthorRepository $repo):Response{
+        $author=$repo->findAllAuthorQB();
+        $formSearch=$this->createForm(SearchType::class );
+        return $this->render('author/listbuild.html.twig' , ['formulaire'=>$formSearch->createView()]);
+
+    }   
+
+    
     
     #[Route ('/add' , name:'add')]
     public function Add( ManagerRegistry $doctrine  ){

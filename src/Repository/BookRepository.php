@@ -40,4 +40,41 @@ class BookRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function searchBookByAuthor( String $author )  {
+        $req = $this->createQueryBuilder('b')
+            ->leftJoin('b.author', 'a')  
+            ->andWhere('a.username LIKE :author')
+            ->setParameter('author', '%' . $author . '%')
+               ->getQuery()->getResult();
+            return $req;
+    }
+
+    public function BookListByAuthor (  ) {
+        $req = $this->createQueryBuilder('b')
+        ->leftJoin('b.author' , 'a')
+        ->orderBy('a.username' , 'ASC')
+        
+        ->getQuery()->getResult();
+        return $req;
+    }
+
+    public function booksBefore2022MultipleAuthors(): array
+{
+    return $this->createQueryBuilder('b')
+        ->leftJoin('b.author', 'a')
+        ->where('b.publicationDate < :date2025')  
+        ->andWhere('b.published = :true')           
+        ->andWhere('a.id IN (                       
+            SELECT a2.id FROM App\Entity\Book b2 
+            JOIN b2.author a2 
+            WHERE b2.published = :true 
+            GROUP BY a2.id 
+            HAVING COUNT(b2) > 0
+        )')
+        ->setParameter('date2025', new \DateTime('2025-01-01'))
+        ->setParameter('true', true)
+        ->getQuery()->getResult();
+}
+
+
 }

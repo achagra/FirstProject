@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Form\BookType;
+use App\Form\SearchType;
 use App\Repository\BookRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -91,5 +92,59 @@ final class BookController extends AbstractController
         return $this->render('book/ShowDetailsBook.html.twig', ['Book'=> $book]);
 
     }
+
+    #[Route('/books', name: 'searchbook')]
+public function searchbook(
+    Request $request, 
+    BookRepository $bookRepository
+): Response {
+    // Formulaire SANS entité
+    $form = $this->createForm(SearchType::class);
+    
+    // TOUS LES LIVRES par défaut
+    $list = $bookRepository->findAll();
+    
+    // Compteurs
+    $published_count = $bookRepository->count(['published' => true]);
+    $non_published_count = $bookRepository->count(['published' => false]);
+
+    // Traitement de la recherche
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $data = $form->getData();
+        $author = $data['Author']; 
+        
+        if (!empty($author)) {
+            $list = $bookRepository->searchBookByAuthor($author);
+            
+            // Recalculer les compteurs pour les résultats
+            $published_count = count(array_filter($list, fn($book) => $book->isPublished()));
+            $non_published_count = count($list) - $published_count;
+        }
+    }
+
+    return $this->render('book/index.html.twig', [
+        'form' => $form->createView(),
+        'list' => $list,
+        'published_count' => $published_count,
+        'non_published_count' => $non_published_count,
+    ]);
+}
+ #[Route(path :'/Showbook', name:'Showbooks')]
+    public function Showbooks(BookRepository $repo):Response{
+        $list = $repo->BookListByAuthor();
+        return $this->render('book/ListBok.html.twig' , ['list' => $list]);
+
+    }   
+
+    #[Route('/books/filtered', name: 'books_filtered')]
+public function filteredBooks(BookRepository $bookRepository): Response
+{
+    $list = $bookRepository->booksBefore2022MultipleAuthors();
+
+    return $this->render('book/filtered.html.twig', [
+        'list' => $list
+    ]);
+}
 
 }

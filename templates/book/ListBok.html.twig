@@ -1,0 +1,33 @@
+<h1> List of Books </h1>
+
+<table class=" table-striped table-hover table-bordered table-sm mb-0">
+ <tr>
+    
+    <td>Title </td>
+    <td>PublicationDate </td>
+    <td>Published</td>
+    <td>Category</td>
+    <td>Author</td>
+    
+ </tr>
+
+ {% for l in list%}
+ <tr>
+  <td>{{ l.title}}</td>
+  <td>{{ l.publicationDate ? l.publicationDate|date('Y-m-d') : 'N/A'}}</td>
+  <td>{{l.published}}</td>
+  <td>{{l.category}}</td>
+  <td>{{l.author.username}}</td>
+   <td>
+    <a href="{{ path('book_edit' , {'id':l.id} ) }}" class="btn btn-primary ms-auto">Edit</a>
+    <a href="{{ path('delete' , {'id':l.id} ) }}" class="btn btn-primary ms-auto">Delete</a>
+    <a href="{{ path('showDetailsBook' , {'id':l.id} ) }}" class="btn btn-primary ms-auto">Show</a>
+
+
+  </td>
+ </tr>
+
+ {% endfor %}
+</table>
+
+
