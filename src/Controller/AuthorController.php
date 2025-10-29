@@ -6,6 +6,7 @@ use App\Entity\Author;
 use App\Form\FormNameType;
 use App\Form\SearchType;
 use App\Repository\AuthorRepository;
+use App\Service\HappyQuote;
 use Doctrine\Persistence\ManagerRegistry ;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\MakerBundle\Security\Model\AuthenticatorType;
@@ -105,9 +106,11 @@ public function authorDetails($id)
     return $this->render('author/showAuthor.html.twig', ['author' => $author]);
   }
     #[Route(path :'/ShowAllAuthor', name:'ShowAllAuthor')]
-    public function ShowAllAuthor(AuthorRepository $repo):Response{
+    public function ShowAllAuthor(AuthorRepository $repo , HappyQuote $quote ):Response{
+        $bestAuthors=$quote->getHappyMessage();
         $author=$repo->findAll();
-        return $this->render('author/listAuthor.html.twig' , ['list' => $author]);
+        
+        return $this->render('author/listAuthor.html.twig' , ['list' => $author , 'theBest' =>$bestAuthors]);
 
     }     
     #[Route(path :'/ShowAllAuthorbuild', name:'ShowAllAuthorbuild')]

@@ -58,6 +58,14 @@ class AuthorRepository extends ServiceEntityRepository
             return $req;
     }
 
+    public function ShowAllAuthorDQL() {
+        $entity=$this->getEntityManager();
+        $query=$entity->createQuery('SELECT a FROM App\Entity\Author a WHERE a.username LIKE ?1 ORDER BY a.username ASC');
+        $query->setParameter(1 , '%a');
+        return $query->getResult();
+
+    }
+
     
 
 
